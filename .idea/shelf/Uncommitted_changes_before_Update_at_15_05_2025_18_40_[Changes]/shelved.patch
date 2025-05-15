@@ -1,0 +1,47 @@
+Index: settings.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>pluginManagement {\r\n    repositories {\r\n        google {\r\n            content {\r\n                includeGroupByRegex(\"com\\\\.android.*\")\r\n                includeGroupByRegex(\"com\\\\.google.*\")\r\n                includeGroupByRegex(\"androidx.*\")\r\n            }\r\n        }\r\n        mavenCentral()\r\n        gradlePluginPortal()\r\n    }\r\n}\r\ndependencyResolutionManagement {\r\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\r\n    repositories {\r\n        google()\r\n        mavenCentral()\r\n        maven { setUrl(\"https://jitpack.io\") }\r\n    }\r\n}\r\n\r\nrootProject.name = \"ExpenseTracker\"\r\ninclude(\":app\")\r\n 
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle.kts b/settings.gradle.kts
+--- a/settings.gradle.kts	(revision c94a9d567c0351d881dc92420aaa60ff6b6362be)
++++ b/settings.gradle.kts	(date 1747314531830)
+@@ -11,15 +11,6 @@
+         gradlePluginPortal()
+     }
+ }
+-dependencyResolutionManagement {
+-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+-    repositories {
+-        google()
+-        mavenCentral()
+-        maven { setUrl("https://jitpack.io") }
+-    }
+-}
+-
+ rootProject.name = "ExpenseTracker"
+ include(":app")
+  
+\ No newline at end of file
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    alias(libs.plugins.android.application)\r\n}\r\n\r\nandroid {\r\n    namespace = \"com.example.expensetracker\"\r\n    compileSdk = 35\r\n\r\n    defaultConfig {\r\n        applicationId = \"com.example.expensetracker\"\r\n        minSdk = 24\r\n        targetSdk = 35\r\n        versionCode = 1\r\n        versionName = \"1.0\"\r\n\r\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            isMinifyEnabled = false\r\n            proguardFiles(\r\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\r\n                \"proguard-rules.pro\"\r\n            )\r\n        }\r\n    }\r\n    buildFeatures{\r\n        viewBinding=true\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility = JavaVersion.VERSION_11\r\n        targetCompatibility = JavaVersion.VERSION_11\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation(libs.appcompat)\r\n    implementation(libs.material)\r\n    implementation(libs.activity)\r\n    implementation(libs.constraintlayout)\r\n    implementation (\"com.github.PhilJay:MPAndroidChart:v3.1.0\")\r\n    testImplementation(libs.junit)\r\n\r\n    androidTestImplementation(libs.ext.junit)\r\n    androidTestImplementation(libs.espresso.core)\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision c94a9d567c0351d881dc92420aaa60ff6b6362be)
++++ b/app/build.gradle.kts	(date 1747314532021)
+@@ -40,9 +40,7 @@
+     implementation(libs.material)
+     implementation(libs.activity)
+     implementation(libs.constraintlayout)
+-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+     testImplementation(libs.junit)
+-
+     androidTestImplementation(libs.ext.junit)
+     androidTestImplementation(libs.espresso.core)
+ 
