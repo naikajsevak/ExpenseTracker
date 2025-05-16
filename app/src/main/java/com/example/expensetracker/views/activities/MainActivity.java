@@ -1,13 +1,13 @@
-package com.example.expensetracker;
+package com.example.expensetracker.views.activities;
 
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
 
 
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import com.example.expensetracker.R;
 import com.example.expensetracker.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
