@@ -2,6 +2,7 @@ package com.example.expensetracker;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("Transaction");
+        binding.floatingActionButton.setOnClickListener(view -> {
+
+        });
     }
 
     @Override
