@@ -6,23 +6,27 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.expensetracker.R;
+import com.example.expensetracker.adapters.AccountAdapter;
 import com.example.expensetracker.adapters.CategoryAdapter;
 import com.example.expensetracker.databinding.FragmentAddTransactionBinding;
 import com.example.expensetracker.databinding.ListDialogBinding;
+import com.example.expensetracker.models.Accounts;
 import com.example.expensetracker.models.Category;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class AddTransactionFragment extends Fragment {
+public class AddTransactionFragment extends BottomSheetDialogFragment {
 
 
 
@@ -68,6 +72,7 @@ public class AddTransactionFragment extends Fragment {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM, YYYY");
                 String dateToShow = simpleDateFormat.format(calendar.getTime());
                 binding.date.setText(dateToShow);
+                datePickerDialog.show();
             });
             datePickerDialog.show();
         });
@@ -84,11 +89,36 @@ public class AddTransactionFragment extends Fragment {
             categories.add(new Category("Rent",R.drawable.key,R.color.category5));
             categories.add(new Category("Other",R.drawable.wallet,R.color.category6));
 
-            CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(),categories);
+            CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), categories, category -> {
+                binding.category.setText(category.getCategoryName());
+                categoryDialog.dismiss();
+            });
             dialogBinding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
             dialogBinding.recyclerView.setAdapter(categoryAdapter);
             categoryDialog.show();
         });
-        return inflater.inflate(R.layout.fragment_add_transaction, container, false);
+        binding.act.setOnClickListener(view -> {
+            ListDialogBinding dialogBinding = ListDialogBinding.inflate(inflater);
+            AlertDialog accountDialog = new AlertDialog.Builder(getContext()).create();
+            accountDialog.setView(dialogBinding.getRoot());
+            ArrayList<Accounts> accountsArrayList = new ArrayList<>();
+            accountsArrayList.add(new Accounts(0,"Cash"));
+            accountsArrayList.add(new Accounts(0,"Bank"));
+            accountsArrayList.add(new Accounts(0,"Gpay"));
+            accountsArrayList.add(new Accounts(0,"Paytm"));
+            accountsArrayList.add(new Accounts(0,"BHIMUPI"));
+            accountsArrayList.add(new Accounts(0,"Other"));
+
+            AccountAdapter accountAdapter = new AccountAdapter(getContext(), accountsArrayList, accounts -> {
+                binding.act.setText(accounts.getAccountName());
+                accountDialog.dismiss();
+            });
+
+            dialogBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            dialogBinding.recyclerView.setAdapter(accountAdapter);
+            accountDialog.show();
+
+        });
+        return binding.getRoot();
     }
 }

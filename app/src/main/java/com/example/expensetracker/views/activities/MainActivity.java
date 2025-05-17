@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.expensetracker.R;
 import com.example.expensetracker.databinding.ActivityMainBinding;
+import com.example.expensetracker.views.fragments.AddTransactionFragment;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -20,8 +21,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("Transaction");
         binding.floatingActionButton.setOnClickListener(view -> {
-
+            AddTransactionFragment addTransactionFragment = new AddTransactionFragment();
+            addTransactionFragment.show(getSupportFragmentManager(), addTransactionFragment.getTag());
         });
+
     }
 
     @Override
