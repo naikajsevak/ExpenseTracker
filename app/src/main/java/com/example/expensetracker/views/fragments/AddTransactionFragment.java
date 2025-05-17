@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -19,6 +20,8 @@ import com.example.expensetracker.databinding.FragmentAddTransactionBinding;
 import com.example.expensetracker.databinding.ListDialogBinding;
 import com.example.expensetracker.models.Accounts;
 import com.example.expensetracker.models.Category;
+import com.example.expensetracker.utils.Constants;
+import com.example.expensetracker.utils.Helper;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.text.SimpleDateFormat;
@@ -68,10 +71,7 @@ public class AddTransactionFragment extends BottomSheetDialogFragment {
                 calendar.set(Calendar.DAY_OF_MONTH,datePicker.getDayOfMonth());
                 calendar.set(Calendar.MONTH,datePicker.getMonth());
                 calendar.set(Calendar.YEAR,datePicker.getYear());
-
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM, YYYY");
-                String dateToShow = simpleDateFormat.format(calendar.getTime());
-                binding.date.setText(dateToShow);
+                binding.date.setText(Helper.formateDate(calendar.getTime()));
                 datePickerDialog.show();
             });
             datePickerDialog.show();
@@ -81,15 +81,9 @@ public class AddTransactionFragment extends BottomSheetDialogFragment {
             AlertDialog categoryDialog = new AlertDialog.Builder(getContext()).create();
             categoryDialog.setView(dialogBinding.getRoot());
 
-            ArrayList<Category> categories = new ArrayList<>();
-            categories.add(new Category("Salary",R.drawable.wages,R.color.category1));
-            categories.add(new Category("Business",R.drawable.briefcase,R.color.category2));
-            categories.add(new Category("Investment",R.drawable.bar_chart,R.color.category3));
-            categories.add(new Category("Loan",R.drawable.loan,R.color.category4));
-            categories.add(new Category("Rent",R.drawable.key,R.color.category5));
-            categories.add(new Category("Other",R.drawable.wallet,R.color.category6));
 
-            CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), categories, category -> {
+
+            CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), Constants.categories, category -> {
                 binding.category.setText(category.getCategoryName());
                 categoryDialog.dismiss();
             });
@@ -115,6 +109,7 @@ public class AddTransactionFragment extends BottomSheetDialogFragment {
             });
 
             dialogBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            dialogBinding.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
             dialogBinding.recyclerView.setAdapter(accountAdapter);
             accountDialog.show();
 
