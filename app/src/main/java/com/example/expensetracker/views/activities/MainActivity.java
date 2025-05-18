@@ -5,6 +5,7 @@ import android.view.Menu;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 
@@ -14,21 +15,27 @@ import com.example.expensetracker.databinding.ActivityMainBinding;
 import com.example.expensetracker.models.Transaction;
 import com.example.expensetracker.utils.Constants;
 import com.example.expensetracker.utils.Helper;
+import com.example.expensetracker.viewmodel.MainViewModel;
 import com.example.expensetracker.views.fragments.AddTransactionFragment;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Calendar calendar;
+
+    MainViewModel mainViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        mainViewModel= new ViewModelProvider(this).get(MainViewModel.class);
+
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("Transaction");
         Constants.setCategories();
@@ -46,16 +53,8 @@ public class MainActivity extends AppCompatActivity {
             AddTransactionFragment addTransactionFragment = new AddTransactionFragment();
             addTransactionFragment.show(getSupportFragmentManager(), addTransactionFragment.getTag());
         });
-        ArrayList<Transaction> transactionArrayList = new ArrayList<>();
-        transactionArrayList.add(new Transaction(Constants.INCOME,"Business","Card","Business related",new Date(),500,1));
-        TransactionsAdapter adapter = new TransactionsAdapter(this,transactionArrayList);
-        binding.transactionList.setLayoutManager(new LinearLayoutManager(this));
-        binding.transactionList.setAdapter(adapter);
     }
-    void setUpDatabase()
-    {
-        Real
-    }
+
     void updateDate()
     {
         binding.currentDate.setText(Helper.formateDate(calendar.getTime()));

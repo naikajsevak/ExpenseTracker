@@ -15,15 +15,15 @@ import com.example.expensetracker.models.Transaction;
 import com.example.expensetracker.utils.Constants;
 import com.example.expensetracker.utils.Helper;
 
-import java.util.ArrayList;
+import io.realm.RealmResults;
 
 public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapter.TransactionsViewHolder>{
     private Context context;
-    private ArrayList<Transaction> transactionArrayList;
-    public TransactionsAdapter(Context context, ArrayList<Transaction> transactionArrayList)
+    private RealmResults<Transaction> transaction;
+    public TransactionsAdapter(Context context, RealmResults<Transaction> transaction)
     {
         this.context=context;
-        this.transactionArrayList=transactionArrayList;
+        this.transaction = transaction;
     }
     @NonNull
     @Override
@@ -33,7 +33,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull TransactionsViewHolder holder, int position) {
-        Transaction transaction = transactionArrayList.get(position);
+        Transaction transaction = this.transaction.get(position);
         holder.binding.amt.setText(String.valueOf(transaction.getAmount()));
         holder.binding.account.setText(transaction.getAccount());
         holder.binding.transactionDate.setText(Helper.formateDate(transaction.getDate()));
@@ -53,7 +53,7 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
 
     @Override
     public int getItemCount() {
-        return transactionArrayList.size();
+        return transaction.size();
     }
 
     public class TransactionsViewHolder extends RecyclerView.ViewHolder {

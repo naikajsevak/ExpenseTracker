@@ -2,10 +2,14 @@ package com.example.expensetracker.models;
 
 import java.util.Date;
 
-public class Transaction {
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+public class Transaction extends RealmObject {
     private String type,category,account,note;
     private Date date;
     private double amount;
+    @PrimaryKey
     private long id;
     public Transaction(){}
     public Transaction(String type, String category, String account, String note, Date date, double amount, long id) {
