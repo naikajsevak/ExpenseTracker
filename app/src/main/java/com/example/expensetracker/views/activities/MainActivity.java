@@ -5,6 +5,7 @@ import android.view.Menu;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -53,6 +54,16 @@ public class MainActivity extends AppCompatActivity {
             AddTransactionFragment addTransactionFragment = new AddTransactionFragment();
             addTransactionFragment.show(getSupportFragmentManager(), addTransactionFragment.getTag());
         });
+        mainViewModel.transaction.observe(this, new Observer<RealmResults<Transaction>>() {
+            @Override
+            public void onChanged(RealmResults<Transaction> transactions) {
+
+            }
+        });
+
+        /*TransactionsAdapter adapter = new TransactionsAdapter(this, transaction);
+        binding.transactionList.setLayoutManager(new LinearLayoutManager(this));
+        binding.transactionList.setAdapter(adapter);*/
     }
 
     void updateDate()

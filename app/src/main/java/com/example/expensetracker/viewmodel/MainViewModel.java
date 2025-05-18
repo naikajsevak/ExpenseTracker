@@ -15,7 +15,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class MainViewModel extends AndroidViewModel {
-    MutableLiveData<RealmResults<Transaction>> transaction = new MutableLiveData<>();
+    public MutableLiveData<RealmResults<Transaction>> transaction = new MutableLiveData<>();
     Realm realm;
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -28,13 +28,13 @@ public class MainViewModel extends AndroidViewModel {
     }
     void getTransaction()
     {
-
+        RealmResults<Transaction> transaction =realm.where(Transaction.class).findAll();
     }
     void addTransaction()
     {
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(new Transaction(Constants.INCOME,"Business","Card","Business related",new Date(),500,new Date().getTime()));
         realm.commitTransaction();
-        RealmResults<Transaction> transaction =realm.where(Transaction.class).findAll();
+
     }
 }
