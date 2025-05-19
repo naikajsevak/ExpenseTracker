@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Calendar calendar;
 
-    MainViewModel mainViewModel;
+    public MainViewModel mainViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,22 +54,49 @@ public class MainActivity extends AppCompatActivity {
             AddTransactionFragment addTransactionFragment = new AddTransactionFragment();
             addTransactionFragment.show(getSupportFragmentManager(), addTransactionFragment.getTag());
         });
+        binding.transactionList.setLayoutManager(new LinearLayoutManager(this));
         mainViewModel.transaction.observe(this, new Observer<RealmResults<Transaction>>() {
             @Override
             public void onChanged(RealmResults<Transaction> transactions) {
-
+                    TransactionsAdapter adapter = new TransactionsAdapter(MainActivity.this, transactions);
+                    binding.transactionList.setAdapter(adapter);
+            }
+        });
+        mainViewModel.totalIncome.observe(this, new Observer<Double>() {
+            @Override
+            public void onChanged(Double aDouble) {
+                binding.income.setText(aDouble.toString());
             }
         });
 
-        /*TransactionsAdapter adapter = new TransactionsAdapter(this, transaction);
-        binding.transactionList.setLayoutManager(new LinearLayoutManager(this));
-        binding.transactionList.setAdapter(adapter);*/
-    }
+        mainViewModel.totalExpense.observe(this, new Observer<Double>() {
+            @Override
+            public void onChanged(Double aDouble) {
+                binding.expense.setText(aDouble.toString());
+            }
+        });
 
+        mainViewModel.total.observe(this, new Observer<Double>() {
+            @Override
+            public void onChanged(Double aDouble) {
+                if(aDouble>=0) {
+                    binding.totalAmount.setTextColor(getColor(R.color.green));
+                }
+                else {
+                    binding.totalAmount.setTextColor(getColor(R.color.red));
+                }
+                binding.totalAmount.setText(aDouble.toString());
+            }
+        });
+        mainViewModel.getTransaction(calendar);
+    }
+    public void getTransaction(){
+        mainViewModel.getTransaction(calendar);
+    }
     void updateDate()
     {
         binding.currentDate.setText(Helper.formateDate(calendar.getTime()));
-
+        mainViewModel.getTransaction(calendar);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
