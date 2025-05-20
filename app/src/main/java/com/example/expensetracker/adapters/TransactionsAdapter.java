@@ -1,6 +1,8 @@
 package com.example.expensetracker.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +51,28 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
         else if(transaction.getType().equals(Constants.EXPENSE)){
             holder.binding.amt.setTextColor(context.getColor(R.color.red));
         }
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                AlertDialog deleteDialog = new AlertDialog.Builder(context).create();
+                deleteDialog.setTitle("Delete Transaction");
+                deleteDialog.setMessage("Are you sure to delete this transaction?");
+                deleteDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                deleteDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        deleteDialog.dismiss();
+                    }
+                });
+                deleteDialog.show();
+                return false;
+            }
+        });
     }
 
     @Override

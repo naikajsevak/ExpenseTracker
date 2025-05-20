@@ -2,6 +2,7 @@ package com.example.expensetracker.views.activities;
 
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(RealmResults<Transaction> transactions) {
                     TransactionsAdapter adapter = new TransactionsAdapter(MainActivity.this, transactions);
                     binding.transactionList.setAdapter(adapter);
+                    if(!transactions.isEmpty()) {
+                        binding.emptyState.setVisibility(View.GONE);
+                    }
+                    else {
+                        binding.emptyState.setVisibility(View.VISIBLE);
+                    }
             }
         });
         mainViewModel.totalIncome.observe(this, new Observer<Double>() {

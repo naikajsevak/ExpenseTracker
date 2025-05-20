@@ -70,6 +70,10 @@ public class MainViewModel extends AndroidViewModel {
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(transaction);
         realm.commitTransaction();
-
+    }
+    public void deleteTransaction()
+    {
+        realm.beginTransaction();
+        realm.commitTransaction();
     }
 }
