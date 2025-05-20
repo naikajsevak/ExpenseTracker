@@ -19,6 +19,7 @@ import com.example.expensetracker.utils.Constants;
 import com.example.expensetracker.utils.Helper;
 import com.example.expensetracker.viewmodel.MainViewModel;
 import com.example.expensetracker.views.fragments.AddTransactionFragment;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,7 +30,6 @@ import io.realm.RealmResults;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Calendar calendar;
-
     public MainViewModel mainViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +44,48 @@ public class MainActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
         updateDate();
         binding.next.setOnClickListener(view -> {
-            calendar.add(Calendar.DATE,1);
+            if(Constants.SELECTED_TAB==Constants.DAILY) {
+                calendar.add(Calendar.DATE, 1);
+            }
+            else if(Constants.SELECTED_TAB==Constants.MONTHLY){
+                calendar.add(Calendar.MONTH,1);
+            }
             updateDate();
         });
         binding.back.setOnClickListener(view -> {
-            calendar.add(Calendar.DATE,-1);
+            if(Constants.SELECTED_TAB==Constants.DAILY) {
+                calendar.add(Calendar.DATE, -1);
+            }
+            else if(Constants.SELECTED_TAB==Constants.MONTHLY){
+                calendar.add(Calendar.MONTH,-1);
+            }
             updateDate();
         });
         binding.floatingActionButton.setOnClickListener(view -> {
             AddTransactionFragment addTransactionFragment = new AddTransactionFragment();
             addTransactionFragment.show(getSupportFragmentManager(), addTransactionFragment.getTag());
+        });
+        binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if(tab.getText().equals("Monthly")){
+                    Constants.SELECTED_TAB=1;
+                    updateDate();
+                } else if(tab.getText().equals("Daily")) {
+                    Constants.SELECTED_TAB=0;
+                    updateDate();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
         });
         binding.transactionList.setLayoutManager(new LinearLayoutManager(this));
         mainViewModel.transaction.observe(this, new Observer<RealmResults<Transaction>>() {
@@ -102,7 +134,13 @@ public class MainActivity extends AppCompatActivity {
     }
     void updateDate()
     {
-        binding.currentDate.setText(Helper.formateDate(calendar.getTime()));
+        if(Constants.SELECTED_TAB==Constants.DAILY){
+            binding.currentDate.setText(Helper.formateDate(calendar.getTime()));
+        }
+        else if(Constants.SELECTED_TAB==Constants.MONTHLY){
+            binding.currentDate.setText(Helper.formateDateByMonth(calendar.getTime()));
+        }
+
         mainViewModel.getTransaction(calendar);
     }
     @Override

@@ -16,6 +16,8 @@ import com.example.expensetracker.models.Category;
 import com.example.expensetracker.models.Transaction;
 import com.example.expensetracker.utils.Constants;
 import com.example.expensetracker.utils.Helper;
+import com.example.expensetracker.viewmodel.MainViewModel;
+import com.example.expensetracker.views.activities.MainActivity;
 
 import io.realm.RealmResults;
 
@@ -56,11 +58,11 @@ public class TransactionsAdapter extends RecyclerView.Adapter<TransactionsAdapte
             public boolean onLongClick(View view) {
                 AlertDialog deleteDialog = new AlertDialog.Builder(context).create();
                 deleteDialog.setTitle("Delete Transaction");
-                deleteDialog.setMessage("Are you sure to delete this transaction?");
+                deleteDialog.setMessage("Are you sure to delete  this transaction?");
                 deleteDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        ((MainActivity)context).mainViewModel.deleteTransaction(transaction);
                     }
                 });
                 deleteDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {

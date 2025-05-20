@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.2' // or your Gradle version
+        classpath 'com.android.tools.build:gradle:8.10.0' // or your Gradle version
         classpath libs.realm.gradle.plugin // ✅ Realm plugin for Java
     }
 }
