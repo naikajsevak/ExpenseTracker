@@ -102,9 +102,6 @@ public class AddTransactionFragment extends BottomSheetDialogFragment {
             ListDialogBinding dialogBinding = ListDialogBinding.inflate(inflater);
             AlertDialog categoryDialog = new AlertDialog.Builder(getContext()).create();
             categoryDialog.setView(dialogBinding.getRoot());
-
-
-
             CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), Constants.categories, category -> {
                 binding.category.setText(category.getCategoryName());
                 transaction.setCategory(category.getCategoryName());

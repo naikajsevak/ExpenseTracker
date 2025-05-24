@@ -9,6 +9,8 @@ public class Constants {
     public static final String INCOME="INCOME";
     public static final String EXPENSE="EXPENSE";
     public static int SELECTED_TAB=0;
+    public static int SELECTED_TAB_STATE=0;
+    public static String SELECTED_STATS_TYPE =Constants.INCOME;
     public static final int DAILY=0;
     public static final int MONTHLY=1;
     public static final int CALENDER=2;

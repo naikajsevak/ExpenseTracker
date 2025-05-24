@@ -7,189 +7,16 @@
     tools:context=".views.activities.MainActivity"
     tools:menu="@menu/bottom_menu">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/transactionList"
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.0"
-        tools:listitem="@layout/row_transaction" />
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/orange"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:tabIndicator="@color/white"
-        app:tabMode="scrollable"
-        app:tabTextColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
-        >
 
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Daily" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Monthly" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Calendar" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Summary" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Notes" />
-    </com.google.android.material.tabs.TabLayout>
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:title="Transaction"
-        app:titleTextColor="@color/white"
-        android:background="@color/orange"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/top_menu"
-        app:itemIconTint="@color/white"
-        />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/orange"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/back"
-            app:tint="@color/white" />
-
-        <EditText
-            android:id="@+id/current_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:ems="10"
-            android:gravity="center"
-            android:inputType="date"
-            android:minHeight="48dp"
-            android:text="may 15,2025"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/next"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_gravity="center_vertical"
-            android:rotation="180"
-            android:src="@drawable/back"
-            app:tint="@color/white" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:baselineAligned="false"
-        android:padding="5dp"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Income" />
-
-            <TextView
-                android:id="@+id/income"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0"
-                android:textColor="#497B0F" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Expense" />
-
-            <TextView
-                android:id="@+id/expense"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0"
-                android:textColor="#FA3021" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total" />
-
-            <TextView
-                android:id="@+id/totalAmount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0" />
-        </LinearLayout>
-    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -205,27 +32,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_menu" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/orange"
-        android:src="@drawable/plus"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageView
-        android:id="@+id/empty_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha="1"
-        app:layout_constraintBottom_toBottomOf="@+id/transactionList"
+        android:background="@color/orange"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:itemIconTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/transactionList"
-        app:srcCompat="@drawable/empty_state" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/top_menu"
+        app:title="Transaction"
+        app:titleTextColor="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
