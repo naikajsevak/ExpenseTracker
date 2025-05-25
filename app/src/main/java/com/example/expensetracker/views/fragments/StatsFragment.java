@@ -30,162 +30,164 @@ import java.util.Map;
 
 import io.realm.RealmResults;
 
-
+/**
+ * Fragment responsible for displaying statistics of transactions in a Pie Chart.
+ * Supports filtering by Income or Expense and viewing data in Daily or Monthly mode.
+ */
 public class StatsFragment extends Fragment {
 
+    // View binding instance for accessing fragment views safely
+    FragmentStatsBinding binding;
 
+    // Calendar instance to track the currently selected date or month
+    Calendar calendar;
+
+    // Shared ViewModel instance to fetch and observe transaction data
+    public MainViewModel mainViewModel;
 
     public StatsFragment() {
         // Required empty public constructor
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // No special initialization required here
     }
-    FragmentStatsBinding binding;
-    Calendar calendar;
-    public MainViewModel mainViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate layout using ViewBinding
         binding = FragmentStatsBinding.inflate(inflater);
+
+        // Initialize calendar with current date/time
         calendar = Calendar.getInstance();
-        mainViewModel= new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+
+        // Obtain the shared ViewModel scoped to the activity
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+
+        // Set initial date and load data accordingly
         updateDate();
+
+        // Setup income button click listener to filter stats by income transactions
         binding.incomeBtn.setOnClickListener(view -> {
             binding.incomeBtn.setBackground(getContext().getDrawable(R.drawable.income_selector));
             binding.expenseBtn.setBackground(getContext().getDrawable(R.drawable.default_selector));
             binding.incomeBtn.setTextColor(getContext().getColor(R.color.green));
             binding.expenseBtn.setTextColor(getContext().getColor(R.color.text_color));
-            Constants.SELECTED_STATS_TYPE =Constants.INCOME;
+            Constants.SELECTED_STATS_TYPE = Constants.INCOME;
             updateDate();
         });
+
+        // Setup expense button click listener to filter stats by expense transactions
         binding.expenseBtn.setOnClickListener(view -> {
             binding.expenseBtn.setBackground(getContext().getDrawable(R.drawable.expense_selector));
             binding.incomeBtn.setBackground(getContext().getDrawable(R.drawable.default_selector));
             binding.expenseBtn.setTextColor(getContext().getColor(R.color.red));
             binding.incomeBtn.setTextColor(getContext().getColor(R.color.text_color));
-            Constants.SELECTED_STATS_TYPE =Constants.EXPENSE;
+            Constants.SELECTED_STATS_TYPE = Constants.EXPENSE;
             updateDate();
         });
+
+        // Next button to increment date or month filter
         binding.next.setOnClickListener(view -> {
-            if(Constants.SELECTED_TAB_STATE==Constants.DAILY) {
-                calendar.add(Calendar.DATE, 1);
-            }
-            else if(Constants.SELECTED_TAB_STATE==Constants.MONTHLY){
-                calendar.add(Calendar.MONTH,1);
-            }
-            updateDate();
-        });
-        binding.back.setOnClickListener(view -> {
-            if(Constants.SELECTED_TAB_STATE==Constants.DAILY) {
-                calendar.add(Calendar.DATE, -1);
-            }
-            else if(Constants.SELECTED_TAB_STATE==Constants.MONTHLY){
-                calendar.add(Calendar.MONTH,-1);
+            if (Constants.SELECTED_TAB_STATE == Constants.DAILY) {
+                calendar.add(Calendar.DATE, 1);  // Next day
+            } else if (Constants.SELECTED_TAB_STATE == Constants.MONTHLY) {
+                calendar.add(Calendar.MONTH, 1); // Next month
             }
             updateDate();
         });
 
+        // Back button to decrement date or month filter
+        binding.back.setOnClickListener(view -> {
+            if (Constants.SELECTED_TAB_STATE == Constants.DAILY) {
+                calendar.add(Calendar.DATE, -1); // Previous day
+            } else if (Constants.SELECTED_TAB_STATE == Constants.MONTHLY) {
+                calendar.add(Calendar.MONTH, -1); // Previous month
+            }
+            updateDate();
+        });
+
+        // TabLayout listener to switch between Daily and Monthly statistics views
         binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(tab.getText().equals("Monthly")){
-                    Constants.SELECTED_TAB_STATE=Constants.MONTHLY;
-                    updateDate();
-                } else if(tab.getText().equals("Daily")) {
-                    Constants.SELECTED_TAB_STATE=Constants.DAILY;
-                    updateDate();
+                if (tab.getText().equals("Monthly")) {
+                    Constants.SELECTED_TAB_STATE = Constants.MONTHLY;
+                } else if (tab.getText().equals("Daily")) {
+                    Constants.SELECTED_TAB_STATE = Constants.DAILY;
                 }
+                updateDate();
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                // No action needed here
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
+                // No action needed here
             }
         });
 
-
-
+        // Observe transactions filtered by category for the selected date/month and type (income/expense)
         mainViewModel.categoryTransactions.observe(getViewLifecycleOwner(), new Observer<RealmResults<Transaction>>() {
             @Override
             public void onChanged(RealmResults<Transaction> transactions) {
+                Pie pie = AnyChart.pie();
 
-                if (transactions != null && !transactions.isEmpty()){
-                   // Toast.makeText(getContext(), "hello", Toast.LENGTH_SHORT).show();
+                if (transactions != null && !transactions.isEmpty()) {
+                    // Show pie chart and hide empty state if data is available
                     binding.emptyState.setVisibility(View.GONE);
                     binding.anyChart.setVisibility(View.VISIBLE);
+
+                    // Prepare data for pie chart by summing amounts per category
                     List<DataEntry> data = new ArrayList<>();
-                    Map<String,Double> categoryMap= new HashMap<>();
-                    for(Transaction transaction:transactions){
+                    Map<String, Double> categoryMap = new HashMap<>();
+
+                    for (Transaction transaction : transactions) {
                         String category = transaction.getCategory();
-                        double amount = transaction.getAmount();
-                        if(categoryMap.containsKey(category)){
-                            double currentTotal=categoryMap.get(category).doubleValue();
-                            currentTotal+=Math.abs(amount);
-                            categoryMap.put(category,currentTotal);
-                        }else{
-                            categoryMap.put(category,Math.abs(amount));
-                        }
+                        double amount = Math.abs(transaction.getAmount());
+
+                        // Aggregate amount by category
+                        categoryMap.put(category, categoryMap.getOrDefault(category, 0.0) + amount);
                     }
-                    for(Map.Entry<String,Double> entry : categoryMap.entrySet()){
+
+                    // Convert map entries to pie chart data entries
+                    for (Map.Entry<String, Double> entry : categoryMap.entrySet()) {
                         data.add(new ValueDataEntry(entry.getKey(), entry.getValue()));
                     }
-                    Pie pie = AnyChart.pie();
+
+                    // Set data and display pie chart
                     pie.data(data);
                     binding.anyChart.setChart(pie);
-                }
-                else{
+                } else {
+                    // Show empty state and hide pie chart if no data
                     binding.emptyState.setVisibility(View.VISIBLE);
                     binding.anyChart.setVisibility(View.GONE);
                 }
-
-
             }
         });
-        mainViewModel.getTransaction(calendar,Constants.SELECTED_STATS_TYPE);
 
-
-
-
-
-        /*pie.title("Fruits imported in 2015 (in kg)");
-
-        pie.labels().position("outside");
-
-        pie.legend().title().enabled(true);
-        pie.legend().title()
-                .text("Retail channels")
-                .padding(0d, 0d, 10d, 0d);
-
-        pie.legend()
-                .position("center-bottom")
-                .itemsLayout(LegendLayout.HORIZONTAL)
-                .align(Align.CENTER);
-
-        anyChartView.setChart(pie);*/
+        // Initial load of transactions based on current date/month and selected stats type
+        mainViewModel.getTransaction(calendar, Constants.SELECTED_STATS_TYPE);
 
         return binding.getRoot();
     }
-    void updateDate()
-    {
-        if(Constants.SELECTED_TAB_STATE==Constants.DAILY){
+
+    /**
+     * Updates the displayed date/month text and triggers data fetch
+     * based on the currently selected date, month, and stats type.
+     */
+    void updateDate() {
+        if (Constants.SELECTED_TAB_STATE == Constants.DAILY) {
             binding.currentDate.setText(Helper.formateDate(calendar.getTime()));
-        }
-        else if(Constants.SELECTED_TAB_STATE==Constants.MONTHLY){
+        } else if (Constants.SELECTED_TAB_STATE == Constants.MONTHLY) {
             binding.currentDate.setText(Helper.formateDateByMonth(calendar.getTime()));
         }
-        mainViewModel.getTransaction(calendar,Constants.SELECTED_STATS_TYPE);
+        mainViewModel.getTransaction(calendar, Constants.SELECTED_STATS_TYPE);
     }
 }

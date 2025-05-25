@@ -5,76 +5,88 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 
 import com.example.expensetracker.R;
-import com.example.expensetracker.adapters.TransactionsAdapter;
 import com.example.expensetracker.databinding.ActivityMainBinding;
-import com.example.expensetracker.models.Transaction;
 import com.example.expensetracker.utils.Constants;
-import com.example.expensetracker.utils.Helper;
 import com.example.expensetracker.viewmodel.MainViewModel;
-import com.example.expensetracker.views.fragments.AddTransactionFragment;
 import com.example.expensetracker.views.fragments.StatsFragment;
 import com.example.expensetracker.views.fragments.TransactionsFragment;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.Calendar;
-import java.util.Date;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
-
+/**
+ * MainActivity serves as the entry point for the application UI.
+ * It handles the setup of the toolbar, navigation between fragments,
+ * and communication with the ViewModel to manage transaction data.
+ */
 public class MainActivity extends AppCompatActivity {
-    ActivityMainBinding binding;
-    Calendar calendar;
-    public MainViewModel mainViewModel;
+
+    ActivityMainBinding binding; // ViewBinding object to access UI components
+    Calendar calendar;           // Calendar instance for tracking current date
+    public MainViewModel mainViewModel; // ViewModel for data handling
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mainViewModel= new ViewModelProvider(this).get(MainViewModel.class);
 
+        // Initialize ViewModel
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        // Set up toolbar
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle("Transaction");
+
+        // Initialize category data
         Constants.setCategories();
+
+        // Initialize current calendar instance
         calendar = Calendar.getInstance();
+
+        // Set the default fragment (TransactionsFragment)
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content,new TransactionsFragment());
+        transaction.replace(R.id.content, new TransactionsFragment());
         transaction.commit();
-        binding.bottomNavigationView.setOnItemReselectedListener(new NavigationBarView.OnItemReselectedListener() {
+
+        // Handle bottom navigation item selection
+        binding.bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
-            public void onNavigationItemReselected(@NonNull MenuItem item) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                if(item.getItemId()==R.id.transaction)
-                {
+                if (item.getItemId() == R.id.transaction) {
+                    // Pop back stack to show TransactionsFragment
                     getSupportFragmentManager().popBackStack();
-                }
-                else if(item.getItemId()==R.id.stats){
-                    transaction.replace(R.id.content,new StatsFragment());
+                } else if (item.getItemId() == R.id.stats) {
+                    // Navigate to StatsFragment
+                    transaction.replace(R.id.content, new StatsFragment());
                     transaction.addToBackStack(null);
                 }
                 transaction.commit();
+                return true;
             }
         });
     }
+
+    /**
+     * Triggers the ViewModel to fetch transaction data based on the current calendar date.
+     */
     public void getTransaction(){
         mainViewModel.getTransaction(calendar);
     }
 
+    /**
+     * Inflates the top options menu into the toolbar.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu,menu);
+        getMenuInflater().inflate(R.menu.top_menu, menu);
         return super.onCreateOptionsMenu(menu);
-
     }
 }

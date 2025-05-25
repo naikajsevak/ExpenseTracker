@@ -31,52 +31,70 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-
+/**
+ * Bottom sheet fragment to add a new transaction (Income/Expense).
+ * This fragment allows the user to select transaction type, date, amount, category, and account.
+ */
 public class AddTransactionFragment extends BottomSheetDialogFragment {
 
+    // Model to hold transaction details
     Transaction transaction;
 
     public AddTransactionFragment() {
-        // Required empty public constructor
+        // Default constructor
     }
-
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
+
     FragmentAddTransactionBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Initialize a new transaction instance
         transaction = new Transaction();
-        // Inflate the layout for this fragment
-        binding=FragmentAddTransactionBinding.inflate(inflater);
+
+        // Inflate view using ViewBinding
+        binding = FragmentAddTransactionBinding.inflate(inflater);
+
+        // Handle Income button click
         binding.incomeBtn.setOnClickListener(view -> {
+            // Update button styles to reflect selection
             binding.incomeBtn.setBackground(getContext().getDrawable(R.drawable.income_selector));
             binding.expenseBtn.setBackground(getContext().getDrawable(R.drawable.default_selector));
             binding.incomeBtn.setTextColor(getContext().getColor(R.color.green));
             binding.expenseBtn.setTextColor(getContext().getColor(R.color.text_color));
+
+            // Set transaction type to income
             transaction.setType(Constants.INCOME);
         });
+
+        // Handle Expense button click
         binding.expenseBtn.setOnClickListener(view -> {
+            // Update button styles to reflect selection
             binding.expenseBtn.setBackground(getContext().getDrawable(R.drawable.expense_selector));
             binding.incomeBtn.setBackground(getContext().getDrawable(R.drawable.default_selector));
             binding.expenseBtn.setTextColor(getContext().getColor(R.color.red));
             binding.incomeBtn.setTextColor(getContext().getColor(R.color.text_color));
+
+            // Set transaction type to expense
             transaction.setType(Constants.EXPENSE);
         });
 
+        // Handle date picker dialog
         binding.date.setOnClickListener(view -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(getContext());
-            datePickerDialog.setOnDateSetListener((datePicker, i, i1, i2) -> {
+            datePickerDialog.setOnDateSetListener((datePicker, year, month, day) -> {
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.DAY_OF_MONTH,datePicker.getDayOfMonth());
-                calendar.set(Calendar.MONTH,datePicker.getMonth());
-                calendar.set(Calendar.YEAR,datePicker.getYear());
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.YEAR, year);
+
+                // Display selected date and update transaction
                 binding.date.setText(Helper.formateDate(calendar.getTime()));
                 transaction.setDate(calendar.getTime());
                 transaction.setId(calendar.getTime().getTime());
@@ -84,45 +102,64 @@ public class AddTransactionFragment extends BottomSheetDialogFragment {
             });
             datePickerDialog.show();
         });
+
+        // Handle Save Transaction button click
         binding.saveTransactionBtn.setOnClickListener(view -> {
             double amount = Double.parseDouble(binding.amt.getText().toString());
             String note  = binding.note.getText().toString();
-            if(transaction.getType().equals(Constants.EXPENSE)) {
-                transaction.setAmount(amount*-1);
-            }
-            else {
+
+            // Set amount negative for expense, positive for income
+            if (transaction.getType().equals(Constants.EXPENSE)) {
+                transaction.setAmount(amount * -1);
+            } else {
                 transaction.setAmount(amount);
             }
+
+            // Add note to transaction
             transaction.setNote(note);
-            ((MainActivity)getActivity()).mainViewModel.addTransaction(transaction);
-            ((MainActivity)getActivity()).getTransaction();
+
+            // Save transaction using ViewModel
+            ((MainActivity) getActivity()).mainViewModel.addTransaction(transaction);
+            ((MainActivity) getActivity()).getTransaction();
+
+            // Close the bottom sheet
             dismiss();
         });
+
+        // Handle Category selection dialog
         binding.category.setOnClickListener(view -> {
             ListDialogBinding dialogBinding = ListDialogBinding.inflate(inflater);
             AlertDialog categoryDialog = new AlertDialog.Builder(getContext()).create();
             categoryDialog.setView(dialogBinding.getRoot());
+
+            // Set up adapter for category list
             CategoryAdapter categoryAdapter = new CategoryAdapter(getContext(), Constants.categories, category -> {
                 binding.category.setText(category.getCategoryName());
                 transaction.setCategory(category.getCategoryName());
                 categoryDialog.dismiss();
             });
-            dialogBinding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+
+            dialogBinding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
             dialogBinding.recyclerView.setAdapter(categoryAdapter);
             categoryDialog.show();
         });
+
+        // Handle Account selection dialog
         binding.act.setOnClickListener(view -> {
             ListDialogBinding dialogBinding = ListDialogBinding.inflate(inflater);
             AlertDialog accountDialog = new AlertDialog.Builder(getContext()).create();
             accountDialog.setView(dialogBinding.getRoot());
-            ArrayList<Accounts> accountsArrayList = new ArrayList<>();
-            accountsArrayList.add(new Accounts(0,"Cash"));
-            accountsArrayList.add(new Accounts(0,"Bank"));
-            accountsArrayList.add(new Accounts(0,"Gpay"));
-            accountsArrayList.add(new Accounts(0,"Paytm"));
-            accountsArrayList.add(new Accounts(0,"BHIMUPI"));
-            accountsArrayList.add(new Accounts(0,"Other"));
 
+            // Create list of available accounts
+            ArrayList<Accounts> accountsArrayList = new ArrayList<>();
+            accountsArrayList.add(new Accounts(0, "Cash"));
+            accountsArrayList.add(new Accounts(0, "Bank"));
+            accountsArrayList.add(new Accounts(0, "Gpay"));
+            accountsArrayList.add(new Accounts(0, "Paytm"));
+            accountsArrayList.add(new Accounts(0, "BHIMUPI"));
+            accountsArrayList.add(new Accounts(0, "Other"));
+
+            // Set up adapter for account list
             AccountAdapter accountAdapter = new AccountAdapter(getContext(), accountsArrayList, accounts -> {
                 binding.act.setText(accounts.getAccountName());
                 transaction.setAccount(accounts.getAccountName());
@@ -130,11 +167,11 @@ public class AddTransactionFragment extends BottomSheetDialogFragment {
             });
 
             dialogBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            dialogBinding.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+            dialogBinding.recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
             dialogBinding.recyclerView.setAdapter(accountAdapter);
             accountDialog.show();
-
         });
+
         return binding.getRoot();
     }
 }
